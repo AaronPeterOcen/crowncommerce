@@ -4,32 +4,51 @@ import {
   signInWithRedirect,
   signInWithPopup,
   GoogleAuthProvider,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  signOut,
+  onAuthStateChanged,
 } from "firebase/auth";
+
 import { getFirestore, doc, getDoc, setDoc } from "firebase/firestore";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyCtAJ58hHy7_I0A15tzlXI67sd_tBdKXBg",
-  authDomain: "shopy-ict-1.firebaseapp.com",
-  projectId: "shopy-ict-1",
-  storageBucket: "shopy-ict-1.appspot.com",
-  messagingSenderId: "1043632778958",
-  appId: "1:1043632778958:web:e40aaef2f12e25f4b36a9f",
+  apiKey: "AIzaSyDGywIuXgARkCdoPymNO4n2fRrKL9RIlGE",
+  authDomain: "crown-commer.firebaseapp.com",
+  projectId: "crown-commer",
+  storageBucket: "crown-commer.appspot.com",
+  messagingSenderId: "1089860307819",
+  appId: "1:1089860307819:web:47354ee247effd806cda2e",
 };
 
 const firebaseApp = initializeApp(firebaseConfig);
 
-const provider = new GoogleAuthProvider();
+const googleProvider = new GoogleAuthProvider();
 
-provider.setCustomParameters({
+googleProvider.setCustomParameters({
   prompt: "select_account",
 });
 
+// export const createUserDocumentFromAuth = async (userAuth) => {
+//   if (!userAuth) return;
+
+//   console.log(userAuth);
+// };
+
 export const auth = getAuth();
-export const signInWithGooglePopup = () => signInWithPopup(auth, provider);
+export const signInWithGooglePopup = () =>
+  signInWithPopup(auth, googleProvider);
+export const signInWithGoogleRedirect = () =>
+  signInWithRedirect(auth, googleProvider);
 
 export const db = getFirestore();
 
-export const createUserDocumentFromAuth = async (userAuth) => {
+export const createUserDocumentFromAuth = async (
+  userAuth,
+  additionalInformation = {}
+) => {
+  if (!userAuth) return;
+
   const userDocRef = doc(db, "users", userAuth.uid);
 
   const userSnapshot = await getDoc(userDocRef);
@@ -43,6 +62,7 @@ export const createUserDocumentFromAuth = async (userAuth) => {
         displayName,
         email,
         createdAt,
+        ...additionalInformation,
       });
     } catch (error) {
       console.log("error creating the user", error.message);
@@ -51,3 +71,20 @@ export const createUserDocumentFromAuth = async (userAuth) => {
 
   return userDocRef;
 };
+
+export const createAuthUserWithEmailAndPassword = async (email, password) => {
+  if (!email || !password) return;
+
+  return createUserWithEmailAndPassword(auth, email, password);
+};
+
+export const signInAuthUserWithEmailAndPassword = async (email, password) => {
+  if (!email || !password) return;
+
+  return signInWithEmailAndPassword(auth, email, password);
+};
+
+export const signOutUser = async () => await signOut(auth);
+
+export const onAuthStateChangedListener = (callback) =>
+  onAuthStateChanged(auth, callback);
