@@ -1,3 +1,4 @@
+// eslint-disable-next-line
 import { initializeApp } from "firebase/app";
 import {
   getAuth,
@@ -19,7 +20,7 @@ import {
   query,
   getDocs,
 } from "firebase/firestore";
-
+// eslint-disable-next-line
 const firebaseConfig = {
   apiKey: "AIzaSyDGywIuXgARkCdoPymNO4n2fRrKL9RIlGE",
   authDomain: "crown-commer.firebaseapp.com",
